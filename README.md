@@ -9,6 +9,14 @@ a professional answers in a video or voice note with subtitles, the lesson goes 
 All seven clips in it today are **examples** (synthetic voices, drawn silhouettes) so you can rehearse now. Swap
 them for the real ones when they arrive (see [Adding a real clip](#adding-a-real-clip)).
 
+## Online (Vercel)
+
+The show is also hosted on Vercel, built from this repository: every push to `main` updates the website by itself.
+Open the site, click once on the page, then press → to start. For the play itself, present from the offline folder
+below (no internet needed, and full screen always works).
+
+Settings live in `vercel.json` (install with pnpm, build `app/`, publish `app/dist`). Nothing to configure on Vercel.
+
 ## Run the show
 
 1. Open **`presentation/index.html`** in **Google Chrome** (double click; no internet, no install, no server).
