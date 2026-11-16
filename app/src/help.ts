@@ -12,7 +12,8 @@ export function mountHelp(deck: Deck): void {
       `<b>Screen ${i + 1} / ${deck.stepCounts.length}</b> · ${meta.id}${deck.isHeld() ? ' · clip playing' : ''}`,
       `<span style="color:#9fb0cc">${meta.notes}</span>`,
       '',
-      '<b>→ Space Enter PageDown</b> next · <b>← Backspace PageUp</b> back',
+      '<b>Left click · → Space Enter PageDown</b> next',
+      '<b>Right click · ← Backspace PageUp</b> back',
       '<b>S</b> skip the clip · <b>B</b> or <b>.</b> black screen · <b>F</b> full screen',
       '<b>number + Enter</b> jump to a screen · <b>H</b> hide this',
     ].join('<br>')

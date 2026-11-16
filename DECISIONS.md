@@ -18,3 +18,7 @@ What was decided, why, and what it costs if it is wrong.
 | One self-contained `index.html` + `media/` | Opens by double click, offline, from a USB key | Must keep `media/` next to it |
 | The lesson board's twist: in Part 2 the jury's three lessons stay dim; the final lights them | Carries the play's question, “who is really being interviewed?”, with no extra press | Remove `lightJury` and the dim class to show all seven as equal |
 | The Part 2 title holds the centre for 4 s, then sits in the corner | One slide says “The Perfect Candidate”, but the centre stays free for Aya and the jury | Increase the hold in `slides/part2.ts` |
+| The Narrator's Bluetooth mouse is the clicker: left click forward, right click back; the pointer hides | Asked by the team; a mouse is easier to hold than a clicker and has two clear buttons | Keys still work; `bindMouse` in the engine |
+| The question after each freeze moves on to the professional by itself after 7 s (a click goes sooner) | Keeps one click per Narrator line: no new cue to learn, no risk of waiting for a click nobody gives | Set `QUESTION_HOLD`, or call `advance` only on click in `slides/question.ts` |
+| Resources are a screen of their own after the bow, before the credits, each with a QR code | People can scan from their seat while the cast leaves the stage | `content/resources.ts` |
+| QR codes use solid square modules | Every code was checked to decode from a screen capture; rounded, spaced modules failed on long addresses | — |

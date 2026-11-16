@@ -10,6 +10,8 @@ export interface Scene {
   lesson: string
   /** The lesson in two or three words, for the lesson board. */
   label: string
+  /** The question on screen after the freeze, before the professional answers it. */
+  question: { topic: string; text: string }
   audience: 'candidate' | 'jury'
   /** The line that sums up the mistake, shown as a frozen quote on the freeze screen. */
   moment: { who: string; line: string }
@@ -30,6 +32,7 @@ export const scenes: Scene[] = [
     title: 'The Late Candidate',
     lesson: 'Punctuality shows respect and professionalism.',
     label: 'Be on time',
+    question: { topic: 'Being Late', text: 'How much can arriving late affect an interview?' },
     audience: 'candidate',
     moment: { who: 'Ayoub', line: 'Okay. Let’s start.' },
     narrator:
@@ -42,6 +45,7 @@ export const scenes: Scene[] = [
     title: 'The Interviewer Who Interrupts',
     lesson: 'Active listening is a professional skill.',
     label: 'Listen fully',
+    question: { topic: 'Interruptions', text: 'Who is responsible when a candidate cannot finish their answers?' },
     audience: 'jury',
     moment: { who: 'Aya, Director', line: 'Then say it!' },
     narrator:
@@ -54,6 +58,7 @@ export const scenes: Scene[] = [
     title: 'The Weak Answer',
     lesson: 'Show your skills through evidence, not just adjectives.',
     label: 'Give evidence',
+    question: { topic: 'Weak Answers', text: 'What makes an interview answer convincing?' },
     audience: 'candidate',
     moment: { who: 'Ayoub', line: 'I am hardworking, motivated, and a good team player.' },
     narrator:
@@ -66,6 +71,7 @@ export const scenes: Scene[] = [
     title: 'The Angry Reaction',
     lesson: 'Respond to criticism with calmness and evidence.',
     label: 'Stay calm',
+    question: { topic: 'Managing Anger', text: 'How can you stay calm when an interviewer challenges you?' },
     audience: 'candidate',
     moment: { who: 'Ayoub', line: 'You didn’t understand my answer!' },
     narrator: 'Ayoub is partly right. But he answered criticism with anger. Here is a calmer way to react.',
@@ -77,6 +83,7 @@ export const scenes: Scene[] = [
     title: 'Judging Without Evidence',
     lesson: 'Evaluate evidence, not assumptions.',
     label: 'Judge facts',
+    question: { topic: 'First Impressions', text: 'How reliable are first impressions when judging a candidate?' },
     audience: 'jury',
     moment: { who: 'Nora', line: 'I decided in the first minute: not him.' },
     narrator:
@@ -89,6 +96,7 @@ export const scenes: Scene[] = [
     title: 'The Candidate Has No Questions',
     lesson: 'An interview is a two-way conversation.',
     label: 'Ask questions',
+    question: { topic: 'Asking Questions', text: 'What questions should you ask at the end of an interview?' },
     audience: 'candidate',
     moment: { who: 'Ayoub', line: 'No, thank you. Everything is clear.' },
     narrator:
@@ -101,6 +109,7 @@ export const scenes: Scene[] = [
     title: 'The Quick Decision',
     lesson: 'A fast decision is not always a fair decision.',
     label: 'Decide fairly',
+    question: { topic: 'Quick Decisions', text: 'Can a quick hiring decision really be fair?' },
     audience: 'jury',
     moment: { who: 'Asmae', line: 'Then it’s a no. Three minutes. Good.' },
     narrator:

@@ -31,6 +31,8 @@ export interface SlideLiveContext {
    * the presenter can always undo. Used while a video plays, so a nervous double press cannot skip it.
    */
   hold(): () => void
+  /** Move on to the next screen as if the presenter had pressed (ignored once the slide has been left). */
+  advance(): void
 }
 
 export interface SlideDefinition {

@@ -27,17 +27,20 @@ Settings live in `vercel.json` (install with pnpm, build `app/`, publish `app/di
 Keep the folder together: `index.html` needs the `media/` folder next to it. Copy the whole `presentation/` folder to
 the USB key and the second device.
 
-### The 19 presses (all on the Narrator's own words)
+### The 20 clicks (all on the Narrator's own words)
+
+The Narrator uses a Bluetooth mouse: **left click = forward, right click = back**. The pointer hides by itself.
 
 | # | The Narrator… | The screen |
 |---|---|---|
-| 1 | presses once before the audience comes in | sound check, then the title (stays during the prologue) |
+| 1 | clicks once before the audience comes in | sound check, then the title (stays during the prologue) |
 | 2 | ends the prologue: “…not the one on the chair.” | “Candidate 1 — Ayoub”, then Scene 1 in the corner, clock at 9:15 |
 | 3, 5 … 15 | says **“Freeze!”** (scenes 1–7) | flash, cold blue, freeze sound, everything stops |
-| 4, 6 … 16 | says the last words before the video (“Here is the right way to arrive.”) | who is speaking → clip with subtitles → the lesson → it flies onto the board → **unfreeze sound, the room thaws by itself** |
+| 4, 6 … 16 | says the last words before the video (“Here is the right way to arrive.”) | **the question** of the scene (7 s, then it moves on by itself; a click moves on sooner) → who is speaking → clip with subtitles → the lesson → it flies onto the board → **unfreeze sound, the room thaws by itself** |
 | 17 | “Same jury. Same chaos. Now, a new candidate: Aya.” | **The Perfect Candidate**: morning light, Aya's four lessons checked |
 | 18 | “…not the only ones being interviewed.” | “Who is really being interviewed?”, the jury's three lessons light up |
-| 19 | after the bow | credits |
+| 19 | after the bow | **Keep practising**: 3 accounts to follow and 3 websites, each with a QR code to scan |
+| 20 | once people have scanned | credits |
 
 The unfreeze sound is the actors' cue: lower the hand when it starts, act again when it fades. The scene name in the
 corner moves to the next scene by itself after the last lines of each scene.
@@ -46,8 +49,8 @@ corner moves to the next scene by itself after the last lines of each scene.
 
 | Key | What it does |
 |---|---|
-| → Space Enter PageDown (clicker forward) | next |
-| ← Backspace PageUp (clicker back) | **undo** the last press. Back during a clip stops it; back after a too-early “Freeze!” brings the room back |
+| **left click** · → Space Enter PageDown | next |
+| **right click** · ← Backspace PageUp | **undo** the last click. Back during a clip stops it; back after a too-early “Freeze!” brings the room back |
 | S | skip the clip now (emergency) |
 | B or . (clicker blank button) | black screen; any press brings the picture back |
 | F | full screen |
@@ -105,6 +108,10 @@ To rehearse with live changes instead: `pnpm dev` and open http://127.0.0.1:5190
   The final question's lesson row can be raised with `--lift` in `app/src/styles.css`.
 - **Sound volume**: set the laptop volume during the sound check; clips are levelled to the same loudness as each
   other.
+- **Questions**: the question shown after each freeze is `question` in `app/content/scenes.ts`; how long it stays
+  before the professional starts is `QUESTION_HOLD` in `app/slides/question.ts` (7 s).
+- **Resources**: the accounts and websites of the “Keep practising” screen are in `app/content/resources.ts`; each
+  `url` becomes a QR code.
 - **Lessons**: the words on the board are the script's “Lesson on screen” sentences; the short labels are `label` in
   `app/content/scenes.ts`.
 
@@ -117,8 +124,8 @@ double-press guard and a stage hook for layers that live across slides. Everythi
 
 | Where | What |
 |---|---|
-| `app/content/` | the script's scenes and lessons, the seven professionals, the cast, the voice waveforms |
-| `app/slides/` | the 20 screens: pre-show, title, Part 1, freeze ×7, professional ×7, Part 2, final question, credits |
+| `app/content/` | the script's scenes, questions and lessons, the seven professionals, the resources, the cast, the voice waveforms |
+| `app/slides/` | the 28 screens: pre-show, title, Part 1, (freeze, question, professional) ×7, Part 2, final question, resources, credits |
 | `app/src/world/` | the room (night, ice, morning light, dust, frost) and the HUD (scene, clock, lesson board) |
 | `app/src/media/` | the clip player and the subtitles |
 | `app/src/sound.ts` | the freeze and unfreeze sounds, made in code |

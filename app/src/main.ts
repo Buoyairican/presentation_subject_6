@@ -1,5 +1,5 @@
 import './styles.css'
-import { bindKeyboard, createDeck, installTestApi } from '@deck/kit'
+import { bindKeyboard, bindMouse, createDeck, installTestApi } from '@deck/kit'
 import { config, slides } from '../deck.config'
 import { registerFonts } from './fonts'
 import { skipCurrent } from './media/player'
@@ -26,9 +26,13 @@ async function start(app: HTMLElement): Promise<void> {
     onStage: (stage) => world.mount(stage, { qa }),
   })
 
-  // Every key press may be the first one: wake the audio output (browsers only allow sound after a press).
+  // Every key press or click may be the first one: wake the audio output (browsers only allow sound after one).
   window.addEventListener('keydown', () => sound.unlock(), { capture: true })
+  window.addEventListener('mousedown', () => sound.unlock(), { capture: true })
   bindKeyboard(deck, { advanceGuardMs: 700, blockReloadKey: true })
+  // The Narrator's Bluetooth mouse: left click forward, right click back.
+  bindMouse(deck, { advanceGuardMs: 700 })
+  hideIdleCursor()
   window.addEventListener('keydown', (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return
     if (e.key === 's' || e.key === 'S') skipCurrent()
@@ -42,6 +46,18 @@ async function start(app: HTMLElement): Promise<void> {
     sounds: () => sound.info(),
   }
   await deck.mount()
+}
+
+/** The mouse pointer disappears after 1.5 s without moving, so it never sits on the projected picture. */
+function hideIdleCursor(): void {
+  let timer = 0
+  const wake = () => {
+    document.body.classList.remove('cursor-hidden')
+    window.clearTimeout(timer)
+    timer = window.setTimeout(() => document.body.classList.add('cursor-hidden'), 1500)
+  }
+  window.addEventListener('mousemove', wake)
+  wake()
 }
 
 start(root).catch((err: unknown) => {

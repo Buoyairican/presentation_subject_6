@@ -18,17 +18,27 @@ export const LINKEDIN_SVG =
 const PERSON_SVG =
   '<svg viewBox="0 0 64 64" width="44%" height="44%" aria-hidden="true"><circle cx="32" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 54c2.5-11 10.5-17 20-17s17.5 6 20 17" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>'
 
-/** A QR code as an SVG, drawn from the module grid with softly rounded modules (still scannable). */
+/**
+ * A QR code as an SVG: classic solid squares, joined row by row with no gaps, the most robust form for a code that
+ * is projected and then scanned from a seat.
+ */
 export function qrSvg(text: string): string {
   const q = encode(text, { ecc: 'M', border: 0 })
   const n = q.size
-  const cells: string[] = []
-  q.data.forEach((row, y) =>
-    row.forEach((on, x) => {
-      if (on) cells.push(`<rect x="${x + 0.06}" y="${y + 0.06}" width="0.88" height="0.88" rx="0.22"/>`)
-    }),
-  )
-  return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="geometricPrecision"><g fill="#04060c">${cells.join('')}</g></svg>`
+  const runs: string[] = []
+  q.data.forEach((row, y) => {
+    let x = 0
+    while (x < n) {
+      if (!row[x]) {
+        x++
+        continue
+      }
+      const start = x
+      while (x < n && row[x]) x++
+      runs.push(`M${start} ${y}h${x - start}v1h${start - x}z`)
+    }
+  })
+  return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><path fill="#04060c" d="${runs.join('')}"/></svg>`
 }
 
 /** `https://www.linkedin.com/in/someone/` → `linkedin.com/in/someone` */

@@ -505,3 +505,27 @@ describe('live hooks (enter, hold, onStage)', () => {
     expect(stage.firstElementChild?.className).toBe('under')
   })
 })
+
+describe('advance', () => {
+  it('moves on by itself, and does nothing once the slide was left', async () => {
+    let go: (() => void) | undefined
+    const auto = slide('auto', 1, {
+      enter({ advance, direction }) {
+        if (direction === 'forward') go = advance
+      },
+    })
+    const deck = makeDeck([slide('a', 1), auto, slide('c', 1)])
+    await deck.mount()
+    await deck.next()
+    const stale = go!
+    await deck.prev()
+    stale()
+    await deck.next()
+    await deck.prev()
+    expect(activeId()).toBe('a')
+    await deck.next()
+    go!()
+    await new Promise((r) => setTimeout(r, 200))
+    expect(activeId()).toBe('c')
+  })
+})

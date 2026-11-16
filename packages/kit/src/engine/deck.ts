@@ -228,8 +228,11 @@ export class Deck {
         holds.delete(key)
       }
     }
+    const advance = () => {
+      if (!abort.signal.aborted) void this.next()
+    }
     try {
-      def.enter({ direction, signal: abort.signal, hold })
+      def.enter({ direction, signal: abort.signal, hold, advance })
     } catch (err) {
       // A failing hook must never stop the show: the slide stays on screen and presses keep working.
       holds.clear()

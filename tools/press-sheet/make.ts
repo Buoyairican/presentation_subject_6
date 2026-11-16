@@ -26,7 +26,7 @@ const press = (when: string, words: string, after = '') => `
 const before = `
   <section class="block first">
     <h3><span>Before</span> Set-up</h3>
-    ${press('Before the audience comes in, on the black screen:', 'Press once', 'You hear a soft whoosh = the sound works. The title appears and stays during the prologue.')}
+    ${press('Before the audience comes in, on the black screen:', 'Click once', 'You hear a soft whoosh = the sound works. The title appears and stays during the prologue.')}
   </section>
   <section class="block">
     <h3><span>Prologue</span> Good morning, everyone…</h3>
@@ -40,7 +40,7 @@ const sceneBlocks = scenes
   <section class="scene">
     <h3><span>Scene ${s.n}</span> ${esc(s.title)}</h3>
     ${press('Hand up, and on the word:', '<b>“Freeze!”</b>', 'Blue screen + freeze sound. Everyone stops.')}
-    ${press(`Say: <i>“${esc(before)}</i>`, `<b>“${esc(s.videoCue)}”</b>`, 'The clip plays by itself (presses are ignored). When the soft whoosh starts, lower your hand. Actors start again when it fades.')}
+    ${press(`Say: <i>“${esc(before)}</i>`, `<b>“${esc(s.videoCue)}”</b>`, `The question “${esc(s.question.text)}” shows for 7 s, then the professional starts by itself (no click needed). During the clip clicks are ignored. When the soft whoosh starts, lower your hand. Actors start again when it fades.`)}
   </section>`
   })
   .join('')
@@ -48,12 +48,13 @@ const sceneBlocks = scenes
 const after = `
   <section class="block warm">
     <h3><span>Part 2</span> Candidate 2 — Aya</h3>
-    ${press('After the last clip, when the room is back, say:', `<b>“${esc(narratorCues.part2)}”</b>`, 'Morning light. Then say “No freezes this time. No videos. Just watch.” No more presses until the very end.')}
+    ${press('After the last clip, when the room is back, say:', `<b>“${esc(narratorCues.part2)}”</b>`, 'Morning light. Then say “No freezes this time. No videos. Just watch.” No more clicks until the very end.')}
   </section>
   <section class="block">
     <h3><span>Finale</span> Your last words</h3>
     ${press('“Two candidates. The same jury. Two very different results.', `<b>“${esc(narratorCues.finale)}”</b>`, '“Who is really being interviewed?” stays up for the bow.')}
-    ${press('After the bow:', 'Press', 'The credits. The end.')}
+    ${press('After the bow:', 'Click', '“Keep practising”: the accounts and websites with their QR codes. Leave it up while people scan.')}
+    ${press('When people have scanned:', 'Click', 'The credits. The end.')}
   </section>`
 
 const html = `<!doctype html><html><head><meta charset="utf-8"><title>Press sheet</title>
@@ -84,17 +85,17 @@ h3 span { display: inline-block; font: 700 7.5pt/1 Inter; letter-spacing: 0.12em
 .help p { margin: 0 0 3pt; }
 </style></head><body>
 <h1>The Perfect Candidate · Narrator</h1>
-<p class="lead"><b>Press only on your own words.</b> 19 presses in the whole play. ▶ = the clicker's forward button.
+<p class="lead"><b>Click only on your own words.</b> 20 clicks in the whole play. ▶ = <b>left click</b> of the mouse; <b>right click</b> = back.
 If you are early or late by a second, nothing breaks.</p>
 <div class="cols">
   ${before}
   ${sceneBlocks}
   ${after}
   <div class="help">
-    <p><b>◀ Back button = undo.</b> Pressed “Freeze!” too early? Press Back: the room comes back to life. Back during a clip stops it.</p>
-    <p><b>Double press?</b> During a clip, presses are ignored. Elsewhere, a second press within ¾ s counts once.</p>
+    <p><b>Right click = undo.</b> Clicked “Freeze!” too early? Right click: the room comes back to life. Right click during a clip stops it.</p>
+    <p><b>Double click?</b> During a clip, clicks are ignored. Elsewhere, a second click within ¾ s counts once.</p>
     <p><b>A clip does not play?</b> The show goes on by itself after a few seconds.</p>
-    <p>Keyboard: <b>S</b> skip the clip · <b>B</b> black screen · <b>F</b> full screen · <b>H</b> help.</p>
+    <p>The pointer hides by itself. Keyboard: <b>S</b> skip the clip · <b>B</b> black screen · <b>F</b> full screen · <b>H</b> help.</p>
   </div>
 </div>
 </body></html>`

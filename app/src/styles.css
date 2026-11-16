@@ -411,3 +411,60 @@
 .hud.is-frozen .slot-mark { border-color: rgba(223, 243, 255, 0.45); }
 .hud.is-frozen .slot.is-filled .slot-mark { border-color: #fff; background: rgba(255, 255, 255, 0.16); }
 .chapter.warm .chapter-kicker { color: rgba(255, 201, 135, 0.75); }
+
+/* The mouse is the Narrator's clicker: no pointer on the picture, no text selection on clicks. */
+body.cursor-hidden, body.cursor-hidden * { cursor: none !important; }
+body { -webkit-user-select: none; user-select: none; }
+
+/* ---------------------------------------------------------------- the question, after each freeze */
+.qs-mark {
+  position: absolute; right: 120px; top: 70px;
+  font: italic 400 900px/1 var(--serif); color: rgba(108, 192, 255, 0.07);
+  pointer-events: none;
+}
+.qs { top: -30px; padding: 0 220px; }
+.qs-topic {
+  display: inline-flex; align-items: center; gap: 16px; height: 52px; padding: 0 24px 0 8px; border-radius: 26px;
+  background: rgba(108, 192, 255, 0.12); border: 1px solid rgba(108, 192, 255, 0.35);
+  font: 500 19px/1 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--ice-4);
+}
+.qs-num {
+  width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ice-3); color: #04123f; font: 700 19px/1 var(--mono); letter-spacing: 0;
+}
+.qs-text {
+  margin-top: 44px; max-width: 1420px;
+  font: italic 400 104px/1.06 var(--serif); letter-spacing: -0.02em; color: #fff; text-wrap: balance;
+}
+.qs-timer { position: relative; width: 320px; height: 3px; margin-top: 56px; border-radius: 2px; background: rgba(223, 243, 255, 0.16); overflow: hidden; }
+.qs-timer i { position: absolute; inset: 0; background: var(--ice-3); transform-origin: left center; transform: scaleX(0); }
+
+/* ---------------------------------------------------------------- resources, before the credits */
+.rs { position: absolute; left: 108px; right: 108px; top: 70px; }
+.rs-title { text-align: center; }
+.rs-title .eyebrow-mono { color: var(--ink-3); }
+.rs-h { margin-top: 18px; font: 400 96px/1 var(--serif); letter-spacing: -0.025em; }
+.rs-h em { font-style: italic; }
+.rs-group { margin-top: 40px; }
+.rs-group + .rs-group { margin-top: 30px; }
+.rs-group-title { margin-bottom: 14px; font: 500 16px/1 var(--mono); letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink-3); }
+.rs-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.rs-card {
+  display: flex; gap: 22px; align-items: flex-start; padding: 20px; border-radius: 20px;
+  background: rgba(10, 16, 32, 0.62); border: 1px solid rgba(214, 226, 255, 0.09);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.rs-qr { flex: none; width: 150px; height: 150px; padding: 9px; border-radius: 14px; background: #fff; }
+.rs-qr svg { display: block; width: 100%; height: 100%; }
+.rs-body { min-width: 0; display: flex; flex-direction: column; gap: 8px; padding-top: 2px; }
+.rs-head { display: flex; align-items: center; gap: 10px; font: 500 14px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); }
+.rs-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: #fff; }
+.rs-icon svg { width: 19px; height: 19px; }
+.rs-tiktok .rs-icon { background: #000; box-shadow: -2px -1px 0 #25f4ee, 2px 1px 0 #fe2c55; }
+.rs-instagram .rs-icon { background: linear-gradient(45deg, #f9a43a, #e1306c 55%, #833ab4); }
+.rs-web .rs-icon { background: rgba(108, 192, 255, 0.2); color: var(--ice-4); }
+.rs-lang { margin-left: 2px; padding: 5px 9px; border-radius: 10px; background: rgba(255, 201, 135, 0.14); color: var(--warm-2); letter-spacing: 0.14em; }
+.rs-name { font: 400 38px/1.05 var(--serif); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rs-about { font: 400 18px/1.35 var(--sans); color: var(--ink-2); }
+.rs-url { font: 400 15px/1.2 var(--mono); color: var(--ice-3); word-break: break-all; }
+.rs-foot { margin-top: 26px; text-align: center; font: 500 15px/1 var(--mono); letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-4); }

@@ -6,9 +6,11 @@ import preshow from './slides/preshow'
 import title from './slides/title'
 import part1 from './slides/part1'
 import { freezeSlide } from './slides/freeze'
+import { questionSlide } from './slides/question'
 import { expertSlide } from './slides/expert'
 import part2 from './slides/part2'
 import final from './slides/final'
+import resources from './slides/resources'
 import credits from './slides/credits'
 
 export const config: DeckConfig = {
@@ -18,8 +20,8 @@ export const config: DeckConfig = {
 }
 
 /**
- * The show, in order. 20 screens, 19 presses, all on the Narrator's own words:
- *   pre-show → title → Part 1 → (Freeze · Expert) × 7 → Part 2 → final question → credits
+ * The show, in order. 28 screens, 20 presses, all on the Narrator's own words (the questions move on by themselves):
+ *   pre-show → title → Part 1 → (Freeze · Question · Expert) × 7 → Part 2 → final question → resources → credits
  */
 export const slides: SlideDefinition[] = [
   preshow,
@@ -28,9 +30,10 @@ export const slides: SlideDefinition[] = [
   ...scenes.flatMap((scene) => {
     const expert = experts.find((x) => x.scene === scene.n)
     if (!expert) throw new Error(`no expert for scene ${scene.n} in content/experts.ts`)
-    return [freezeSlide(scene), expertSlide(scene, expert)]
+    return [freezeSlide(scene), questionSlide(scene), expertSlide(scene, expert)]
   }),
   part2,
   final,
+  resources,
   credits,
 ]
