@@ -69,7 +69,7 @@ the files and the person's details and it can be done for you.
    python3 tools/media/prepare.py ~/Downloads/video-from-whatsapp.mp4 scene-1-hr-manager
    ```
 
-   This writes the clip to `app/public/media/` (WebM + MP4, max 1080p, phone rotation kept, same loudness as every
+   This writes the clip to `app/public/media/` (WebM + MP4 at 720p, about 5-10 MB a minute instead of 100+, phone rotation kept, same loudness as every
    other clip) with its poster picture and the voice waveform.
 2. **Subtitles**: write `app/subtitles/scene-1-hr-manager.vtt`. If they speak English, write what they say; if they
    speak French, write the English translation. Two lines at most per subtitle:

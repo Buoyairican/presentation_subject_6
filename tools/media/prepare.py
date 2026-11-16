@@ -8,7 +8,8 @@ Prepare a professional's real clip for the show. Needs ffmpeg (https://ffmpeg.or
   --audio       treat it as a voice note (automatic for audio-only files)
 
 It writes, in app/public/media/:
-  video:       <name>.webm + <name>.mp4 (max 1080p, phone rotation kept) and <name>-poster.jpg
+  video:       <name>.webm + <name>.mp4 (720p, 30 fps max, phone rotation kept) and <name>-poster.jpg
+               A one-minute phone video of 100+ MB becomes about 5-10 MB: no visible difference on a projector.
   voice note:  <name>.webm + <name>.m4a
 and app/content/waveforms/<name>.json (the voice's loudness, drives the ring around the photo).
 The sound is levelled to the same loudness as every other clip (EBU R128, -16 LUFS), so no clip is too loud or too
@@ -74,17 +75,20 @@ def main() -> None:
         ff("-i", str(src), "-vn", "-af", LEVEL, "-ar", "48000", "-c:a", "libopus", "-b:a", "96k", f"{base}.webm")
         ff("-i", str(src), "-vn", "-af", LEVEL, "-ar", "48000", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", f"{base}.m4a")
     else:
-        # Longest side 1920 at most, rotation from the phone applied, even dimensions for the encoders.
-        scale = "scale='if(gt(iw,ih),min(1920,iw),-2)':'if(gt(iw,ih),-2,min(1920,ih))',scale=trunc(iw/2)*2:trunc(ih/2)*2"
-        ff("-i", str(src), "-vf", scale, "-af", LEVEL, "-ar", "48000",
-           "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "33", "-row-mt", "1", "-deadline", "good", "-cpu-used", "3",
+        # Longest side 1280 at most (720p: plenty for a projector), rotation from the phone applied, even dimensions.
+        scale = "scale='if(gt(iw,ih),min(1280,iw),-2)':'if(gt(iw,ih),-2,min(1280,ih))',scale=trunc(iw/2)*2:trunc(ih/2)*2"
+        ff("-i", str(src), "-vf", scale, "-fpsmax", "30", "-af", LEVEL, "-ar", "48000",
+           "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "36", "-row-mt", "1", "-deadline", "good", "-cpu-used", "3",
            "-pix_fmt", "yuv420p", "-c:a", "libopus", "-b:a", "96k", f"{base}.webm")
-        ff("-i", str(src), "-vf", scale, "-af", LEVEL, "-ar", "48000",
-           "-c:v", "libx264", "-crf", "21", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+        ff("-i", str(src), "-vf", scale, "-fpsmax", "30", "-af", LEVEL, "-ar", "48000",
+           "-c:v", "libx264", "-crf", "24", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
            "-c:a", "aac", "-b:a", "128k", f"{base}.mp4")
         ff("-ss", "1", "-i", f"{base}.mp4", "-frames:v", "1", "-q:v", "3", f"{base}-poster.jpg")
     waveform(src, WAVES / f"{a.name}.json")
     kind = "audio" if audio else "video"
+    mb = lambda p: f"{p.stat().st_size / 1e6:.1f} MB"
+    sizes = ", ".join(f"{f.name} {mb(f)}" for f in sorted(MEDIA.glob(f"{a.name}.*")))
+    print(f"{src.name}: {mb(src)} -> {sizes}")
     print(f"Done: {a.name} ({kind}). Now add app/subtitles/{a.name}.vtt and fill in app/content/experts.ts.")
 
 
