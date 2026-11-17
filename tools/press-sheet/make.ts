@@ -110,7 +110,7 @@ If you are early or late by a second, nothing breaks.</p>
     <p><b>Right click = undo.</b> Clicked “Freeze!” too early? Right click: the room comes back to life. Right click during a clip stops it.</p>
     <p><b>Double click?</b> During a clip, clicks are ignored. Elsewhere, a second click within ¾ s counts once.</p>
     <p><b>A clip does not play?</b> The show goes on by itself after a few seconds.</p>
-    <p>The pointer hides by itself. Keyboard: <b>S</b> skip the clip · <b>B</b> black screen · <b>F</b> full screen · <b>H</b> help.</p>
+    <p>The pointer hides by itself. Keyboard: <b>→</b> next, even during a clip · <b>S</b> skip the clip · <b>B</b> black screen · <b>F</b> full screen · <b>H</b> help.</p>
   </div>
 </div>
 </body></html>`

@@ -18,7 +18,8 @@ The seven professionals, one per freeze (details in `app/content/experts.ts`):
 | 6 · Asking questions | Salma El Mrharraz, Data Engineer at Ciril Group | voice note, English |
 | 7 · Quick decisions | Youssef Med, Aeronautical Engineer (workplace kept private) | voice note, French |
 
-To change or replace a clip, see [Adding a real clip](#adding-a-real-clip).
+To change or replace a clip, see [Adding a real clip](#adding-a-real-clip). Every subtitle, with what is said
+and its time, is listed in [SUBTITLES.md](SUBTITLES.md) for checking while watching.
 
 ## Online (Vercel)
 
@@ -61,6 +62,7 @@ corner moves to the next scene by itself after the last lines of each scene.
 | Key | What it does |
 |---|---|
 | **left click** · → Space Enter PageDown | next |
+| → (keyboard right arrow) | next **even while a clip plays**: stops the clip and moves to the next screen (for whoever runs the laptop) |
 | **right click** · ← Backspace PageUp | **undo** the last click. Back during a clip stops it; back after a too-early “Freeze!” brings the room back |
 | S | skip the clip now (emergency) |
 | B or . (clicker blank button) | black screen; any press brings the picture back |
@@ -68,7 +70,7 @@ corner moves to the next scene by itself after the last lines of each scene.
 | number, then Enter | jump to that screen (1 = pre-show) |
 | H | help: where the show is, the next cue, the keys (for rehearsals, not during the show) |
 
-Safety built in: presses are ignored while a clip plays; a double press within ¾ s counts once; a held key does not
+Safety built in: presses are ignored while a clip plays (except the keyboard's → arrow); a double press within ¾ s counts once; a held key does not
 repeat; F5 (sent by some clickers) does not reload; after a reload the show reopens where it was; a clip that cannot
 play is skipped after a few seconds and the show goes on.
 
@@ -87,7 +89,8 @@ the files and the person's details and it can be done for you.
    other clip) with its poster picture and the voice waveform. Options: `--audio` keeps only the sound (a call
    recorded with the camera off becomes a voice note), `--crop W:H:X:Y` keeps part of the picture (the video tiles of
    a screen-recorded call), `--end 89.9` cuts the dead air after the last word.
-2. **Subtitles**: write `app/subtitles/scene-1-hr-manager.vtt`. If they speak English, write what they say; if they
+2. **Subtitles**: write `app/subtitles/scene-1-hr-manager.vtt` (or let `tools/subtitles/align.py` time them for you
+   from a line-by-line transcript: see the top of that file). If they speak English, write what they say; if they
    speak French, write the English translation. Two lines at most per subtitle:
 
    ```text

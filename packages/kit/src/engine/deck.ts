@@ -267,10 +267,14 @@ export class Deck {
     })
   }
 
-  /** Advance one step. Ignored, at the moment of the press, while the live slide holds forward presses. */
-  next(): Promise<void> {
-    if (this.isHeld()) return Promise.resolve()
-    return this.enqueue(() => (this.isHeld() ? Promise.resolve() : this.stepForward()))
+  /**
+   * Advance one step. Ignored, at the moment of the press, while the live slide holds forward presses, unless
+   * `force` is set: then the held slide is left (its signal aborts, which stops its clip) and the deck moves on.
+   */
+  next(opts: { force?: boolean } = {}): Promise<void> {
+    const force = opts.force === true
+    if (!force && this.isHeld()) return Promise.resolve()
+    return this.enqueue(() => (!force && this.isHeld() ? Promise.resolve() : this.stepForward()))
   }
 
   prev(): Promise<void> {

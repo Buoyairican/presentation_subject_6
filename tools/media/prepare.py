@@ -30,7 +30,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MEDIA = ROOT / "app" / "public" / "media"
 WAVES = ROOT / "app" / "content" / "waveforms"
-LEVEL = "loudnorm=I=-16:TP=-1.5:LRA=11"
+# The sound starts at 0 with the picture: some cameras (Windows Camera) start the sound track a second or more after
+# the picture; browsers keep that delay, so it is padded with silence here and the subtitles' clock is the clip's clock.
+LEVEL = "aresample=async=1:first_pts=0,loudnorm=I=-16:TP=-1.5:LRA=11"
 
 
 def ff(*args: str) -> None:

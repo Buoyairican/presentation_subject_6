@@ -1,7 +1,7 @@
 import type { DeckPosition } from './position'
 
 export interface KeyboardTarget {
-  next(): Promise<void>
+  next(opts?: { force?: boolean }): Promise<void>
   prev(): Promise<void>
   goTo(pos: DeckPosition): Promise<void>
   stepCounts: number[]
@@ -28,6 +28,11 @@ export interface KeyboardOptions {
   advanceGuardMs?: number
   /** Swallow F5, which some presentation clickers send and which would reload the deck. Default false. */
   blockReloadKey?: boolean
+  /**
+   * Advance keys that also move on while the live slide holds presses (a clip is playing), for whoever runs the
+   * laptop, e.g. ['ArrowRight']. The other advance keys (and the mouse) stay ignored during a clip. Default none.
+   */
+  forceKeys?: string[]
   /** Clock for the advance guard (tests). Default `performance.now`. */
   now?: () => number
 }
@@ -37,6 +42,7 @@ export function bindKeyboard(deck: KeyboardTarget, opts: KeyboardOptions = {}): 
   const digitTimeoutMs = opts.digitTimeoutMs ?? 1500
   const guardMs = opts.advanceGuardMs ?? 0
   const now = opts.now ?? (() => win.performance.now())
+  const forceKeys = new Set(opts.forceKeys ?? [])
   let lastAdvance = -Infinity
   let digits = ''
   let timer: ReturnType<typeof setTimeout> | undefined
@@ -83,7 +89,7 @@ export function bindKeyboard(deck: KeyboardTarget, opts: KeyboardOptions = {}): 
       const t = now()
       if (t - lastAdvance >= guardMs) {
         lastAdvance = t
-        void deck.next()
+        void (forceKeys.has(key) ? deck.next({ force: true }) : deck.next())
       }
     }
     else if (PREV.has(key)) void deck.prev()

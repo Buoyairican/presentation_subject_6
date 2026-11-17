@@ -455,6 +455,28 @@ describe('live hooks (enter, hold, onStage)', () => {
     expect(deck.isHeld()).toBe(false)
   })
 
+  it('moves on while held when the press is forced, and the held slide is left', async () => {
+    let signal: AbortSignal | undefined
+    const holder = slide('holder', 1, {
+      enter(ctx) {
+        if (ctx.direction === 'forward') {
+          ctx.hold()
+          signal = ctx.signal
+        }
+      },
+    })
+    const deck = makeDeck([slide('a', 1), holder, slide('c', 1)])
+    await deck.mount()
+    await deck.next()
+    expect(deck.isHeld()).toBe(true)
+    await deck.next()
+    expect(activeId()).toBe('holder')
+    await deck.next({ force: true })
+    expect(activeId()).toBe('c')
+    expect(signal!.aborted).toBe(true)
+    expect(deck.isHeld()).toBe(false)
+  })
+
   it('drops holds when the slide is left with Back', async () => {
     const holder = slide('holder', 1, {
       enter({ hold }) {

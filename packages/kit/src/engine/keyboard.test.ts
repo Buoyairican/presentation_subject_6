@@ -116,6 +116,21 @@ describe('bindKeyboard', () => {
   })
 })
 
+describe('bindKeyboard force keys', () => {
+  it('forces only the keys it is given', () => {
+    const d = target()
+    let t = 1000
+    const unbind = bindKeyboard(d, { advanceGuardMs: 700, forceKeys: ['ArrowRight'], now: () => t })
+    press('ArrowRight')
+    expect(d.next).toHaveBeenLastCalledWith({ force: true })
+    t += 1000
+    press('PageDown')
+    expect(d.next).toHaveBeenLastCalledWith()
+    expect(d.next).toHaveBeenCalledTimes(2)
+    unbind()
+  })
+})
+
 describe('bindKeyboard guards', () => {
   it('counts a quick second advance once, then accepts the next after the guard', () => {
     const d = target()

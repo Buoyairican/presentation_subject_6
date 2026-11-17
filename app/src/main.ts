@@ -29,7 +29,7 @@ async function start(app: HTMLElement): Promise<void> {
   // Every key press or click may be the first one: wake the audio output (browsers only allow sound after one).
   window.addEventListener('keydown', () => sound.unlock(), { capture: true })
   window.addEventListener('mousedown', () => sound.unlock(), { capture: true })
-  bindKeyboard(deck, { advanceGuardMs: 700, blockReloadKey: true })
+  bindKeyboard(deck, { advanceGuardMs: 700, blockReloadKey: true, forceKeys: ['ArrowRight'] })
   // The Narrator's Bluetooth mouse: left click forward, right click back.
   bindMouse(deck, { advanceGuardMs: 700 })
   hideIdleCursor()
