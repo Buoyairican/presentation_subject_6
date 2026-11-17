@@ -18,6 +18,18 @@ export function skipCurrent(): void {
   else skipHandler?.()
 }
 
+/** Set by the expert slide while it holds the presses: what the keyboard's → does there (one stage forward). */
+let stepHandler: (() => void) | null = null
+export function setStepHandler(fn: (() => void) | null): void {
+  stepHandler = fn
+}
+/** The keyboard's → while a professional's sequence holds the presses. False when nothing is there to move on. */
+export function stepCurrent(): boolean {
+  if (!stepHandler) return false
+  stepHandler()
+  return true
+}
+
 /**
  * One clip on screen: a video in a frame, or a voice note drawn as a ring around the person's photo, with
  * subtitles from its .vtt file. `play` resolves when the clip ends, fails, is skipped or the slide is left; it never

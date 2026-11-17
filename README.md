@@ -62,7 +62,7 @@ corner moves to the next scene by itself after the last lines of each scene.
 | Key | What it does |
 |---|---|
 | **left click** · → Space Enter PageDown | next |
-| → (keyboard right arrow) | next **even while a clip plays**: stops the clip and moves to the next screen (for whoever runs the laptop) |
+| → (keyboard right arrow) | during a professional, **one step on** (for whoever runs the laptop): on the card, the video starts now; during the video, it stops and the lesson comes; during the lesson, it goes onto the board and the unfreeze starts; during the unfreeze, the room is back at once. Then → is the normal next |
 | **right click** · ← Backspace PageUp | **undo** the last click. Back during a clip stops it; back after a too-early “Freeze!” brings the room back |
 | S | skip the clip now (emergency) |
 | B or . (clicker blank button) | black screen; any press brings the picture back |
@@ -70,7 +70,7 @@ corner moves to the next scene by itself after the last lines of each scene.
 | number, then Enter | jump to that screen (1 = pre-show) |
 | H | help: where the show is, the next cue, the keys (for rehearsals, not during the show) |
 
-Safety built in: presses are ignored while a clip plays (except the keyboard's → arrow); a double press within ¾ s counts once; a held key does not
+Safety built in: presses are ignored while a clip plays (the keyboard's → moves it on one step); a double press within ¾ s counts once; a held key does not
 repeat; F5 (sent by some clickers) does not reload; after a reload the show reopens where it was; a clip that cannot
 play is skipped after a few seconds and the show goes on.
 

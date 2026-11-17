@@ -3,8 +3,8 @@ import { gsap } from 'gsap'
 import { subtitlesFor, waveformFor, type Expert } from '../content/experts'
 import { scenes, type Scene } from '../content/scenes'
 import { buildCard, type CardParts } from '../src/card'
-import { anySignal, el, maskedWords, run, wait } from '../src/dom'
-import { Player, setSkipHandler } from '../src/media/player'
+import { anySignal, el, maskedWords, run, runOr, waitOr } from '../src/dom'
+import { Player, setSkipHandler, setStepHandler } from '../src/media/player'
 import { sound } from '../src/sound'
 import { world, type WorldState } from '../src/world/world'
 import { CHECK_SVG } from '../src/world/hud'
@@ -21,6 +21,10 @@ const LESSON_HOLD = 2.3
  * returns to the freeze.
  *
  *   card ─▶ clip with subtitles ─▶ lesson ─▶ lesson flies into the board ─▶ unfreeze sound + thaw ─▶ acting
+ *
+ * The keyboard's → (for whoever runs the laptop) moves on one stage: the card → the clip starts now; the clip → it
+ * stops and the lesson comes; the lesson → it goes onto the board and the unfreeze starts now; the thaw → the room is
+ * back at once. Once the room is back, → is the normal next press.
  */
 export function expertSlide(scene: Scene, expert: Expert): SlideDefinition {
   let slideEl: HTMLElement | null = null
@@ -55,7 +59,21 @@ export function expertSlide(scene: Scene, expert: Expert): SlideDefinition {
     const skip = new AbortController()
     const introSignal = anySignal(signal, skip.signal)
     setSkipHandler(() => skip.abort())
-    signal.addEventListener('abort', () => setSkipHandler(null), { once: true })
+    // → finishes the current stage now: `stage` is replaced at each stage, and the clip is skipped while it plays.
+    let stage = new AbortController()
+    let inClip = false
+    let skipClip = false
+    setStepHandler(() => {
+      if (inClip) {
+        skipClip = true
+        player.skip()
+      }
+      stage.abort()
+    })
+    signal.addEventListener('abort', () => {
+      setSkipHandler(null)
+      setStepHandler(null)
+    }, { once: true })
 
     // 1. Who is speaking.
     const intro = gsap.timeline({ paused: true })
@@ -65,11 +83,13 @@ export function expertSlide(scene: Scene, expert: Expert): SlideDefinition {
     intro.fromTo([hero.job, hero.company], { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 }, 0.7)
     intro.fromTo(hero.tags.children, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.07 }, 0.9)
     if (hero.link) intro.fromTo(hero.link, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, 1.05)
-    await run(intro, introSignal)
+    await runOr(intro, introSignal, stage.signal)
     if (signal.aborted) return
-    if (!skip.signal.aborted) await wait(INTRO_HOLD - 0.6, introSignal)
+    if (!skip.signal.aborted) await waitOr(INTRO_HOLD - 0.6, introSignal, stage.signal)
     if (signal.aborted) return
     const skipped = skip.signal.aborted
+    stage = new AbortController()
+    inClip = true
 
     // 2. The clip: the card steps aside, the picture opens from the centre.
     const open = gsap.timeline({ paused: true })
@@ -83,10 +103,12 @@ export function expertSlide(scene: Scene, expert: Expert): SlideDefinition {
     open.fromTo([player.progress, player.time], { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.9)
     open.set(panelEl, { opacity: 1 }, 0.5)
     open.fromTo(panel.root, { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.9, ease: 'expo.out' }, 0.55)
-    if (!skipped && !(await ok(run(open, signal)))) return
+    if (!skipped && !(await ok(runOr(open, signal, stage.signal)))) return
     setSkipHandler(null)
-    const result = skipped ? 'skipped' : await player.play(signal)
+    const result = skipped || skipClip ? 'skipped' : await player.play(signal)
     if (signal.aborted || result === 'aborted') return
+    inClip = false
+    stage = new AbortController()
     if (result === 'error') {
       const n = gsap.timeline({ paused: true })
       n.to(notice, { opacity: 1, duration: 0.3 }).to(notice, { opacity: 0, duration: 0.4 }, '+=1.6')
@@ -99,8 +121,9 @@ export function expertSlide(scene: Scene, expert: Expert): SlideDefinition {
     lesson.set(lessonBox, { opacity: 1 }, 0.5)
     lesson.fromTo(lessonEyebrow, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out' }, 0.55)
     rise(lesson, lessonWords, 0.65, { duration: 1.2, stagger: 0.06 })
-    if (!(await ok(run(lesson, signal)))) return
-    if (!(await ok(wait(LESSON_HOLD, signal)))) return
+    // → anywhere from here to the board: the lesson lands on the board at once and the unfreeze starts.
+    if (!(await ok(runOr(lesson, signal, stage.signal)))) return
+    if (!(await ok(waitOr(LESSON_HOLD, signal, stage.signal)))) return
 
     // 4. The lesson becomes its short label and flies into its place on the board.
     const toBoard = gsap.timeline({ paused: true })
@@ -110,13 +133,20 @@ export function expertSlide(scene: Scene, expert: Expert): SlideDefinition {
     toBoard.fromTo(chip, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.8)' }, 0.3)
     toBoard.add(world.fillLesson(scene.n, chip, () => stageScale(slideEl!)), 1.05)
     toBoard.to({}, { duration: 0.25 })
-    if (!(await ok(run(toBoard, signal)))) return
+    if (!(await ok(runOr(toBoard, signal, stage.signal)))) return
+    if (stage.signal.aborted) {
+      // Fast-forwarded: the board already shows the lesson, so the flying chip goes at once.
+      gsap.killTweensOf(chip)
+      gsap.set(chipBox, { opacity: 0 })
+    }
 
-    // 5. Unfreeze: the sound is the actors' cue; when it has faded, the scene goes on.
+    // 5. Unfreeze: the sound is the actors' cue; when it has faded, the scene goes on. → here: the room is back at once.
+    stage = new AbortController()
     sound.play('unfreeze')
     const thaw = world.thaw({ mode: 'acting', scene: scene.n, filled: scene.n })
     thaw.pause()
-    if (!(await ok(run(thaw, signal)))) return
+    if (!(await ok(runOr(thaw, signal, stage.signal)))) return
+    setStepHandler(null)
     hideAll()
     release()
     if (scene.n < scenes.length) world.nextSceneAfter(scene.tailSeconds, scene.n + 1)

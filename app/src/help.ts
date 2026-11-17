@@ -13,7 +13,7 @@ export function mountHelp(deck: Deck): void {
       `<span style="color:#9fb0cc">${meta.notes}</span>`,
       '',
       '<b>Left click · → Space Enter PageDown</b> next',
-      '<b>→</b> also moves on during a clip (left click and the other keys wait for it)',
+      '<b>→</b> during a professional: one step on (card → video → lesson → unfreeze); left click waits',
       '<b>Right click · ← Backspace PageUp</b> back',
       '<b>S</b> skip the clip · <b>B</b> or <b>.</b> black screen · <b>F</b> full screen',
       '<b>number + Enter</b> jump to a screen · <b>H</b> hide this',

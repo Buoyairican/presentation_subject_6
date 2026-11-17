@@ -49,6 +49,51 @@ export function wait(seconds: number, signal: AbortSignal): Promise<boolean> {
   })
 }
 
+/**
+ * Like `wait`, but `fast` ends it early (resolves true): the → key moving the sequence on. Resolves false only when
+ * `signal` (the slide) is aborted.
+ */
+export function waitOr(seconds: number, signal: AbortSignal, fast: AbortSignal): Promise<boolean> {
+  if (fast.aborted) return Promise.resolve(!signal.aborted)
+  return new Promise((resolve) => {
+    if (signal.aborted) return resolve(false)
+    const id = setTimeout(() => resolve(true), seconds * 1000)
+    signal.addEventListener('abort', () => {
+      clearTimeout(id)
+      resolve(false)
+    }, { once: true })
+    fast.addEventListener('abort', () => {
+      clearTimeout(id)
+      resolve(!signal.aborted)
+    }, { once: true })
+  })
+}
+
+/**
+ * Like `run`, but `fast` jumps the timeline to its end (its end state and callbacks happen at once) and resolves
+ * true: the → key moving the sequence on. Resolves false only when `signal` (the slide) is aborted.
+ */
+export function runOr(tl: gsap.core.Timeline, signal: AbortSignal, fast: AbortSignal): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (signal.aborted) {
+      tl.kill()
+      return resolve(false)
+    }
+    const finish = () => {
+      tl.progress(1)
+      resolve(!signal.aborted)
+    }
+    if (fast.aborted) return finish()
+    tl.eventCallback('onComplete', () => resolve(true))
+    signal.addEventListener('abort', () => {
+      tl.kill()
+      resolve(false)
+    }, { once: true })
+    fast.addEventListener('abort', finish, { once: true })
+    tl.play()
+  })
+}
+
 /** Play a GSAP timeline to its end, or kill it when aborted. Resolves false when aborted. */
 export function run(tl: gsap.core.Timeline, signal: AbortSignal): Promise<boolean> {
   return new Promise((resolve) => {
