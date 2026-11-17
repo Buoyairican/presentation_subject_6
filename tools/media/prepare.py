@@ -1,11 +1,14 @@
 """
 Prepare a professional's real clip for the show. Needs ffmpeg (https://ffmpeg.org) and Python 3, nothing else.
 
-  python3 tools/media/prepare.py <input file> <name> [--audio]
+  python3 tools/media/prepare.py <input file> <name> [--audio] [--crop W:H:X:Y] [--end SECONDS]
 
   <input file>  what the person sent: a phone video (.mp4, .mov, ...) or a voice note (.ogg, .opus, .m4a, .mp3, ...)
   <name>        the base name used in content/experts.ts, e.g. scene-3-recruiter
-  --audio       treat it as a voice note (automatic for audio-only files)
+  --audio       keep only the sound and show it as a voice note (automatic for audio-only files); use it for a
+                call recorded with the camera off
+  --crop        keep only part of the picture, e.g. the video tiles of a screen-recorded call (in source pixels)
+  --end         stop the clip here (in seconds), to cut dead air after the last word; it fades out over 0.4 s
 
 It writes, in app/public/media/:
   video:       <name>.webm + <name>.mp4 (720p, 30 fps max, phone rotation kept) and <name>-poster.jpg
@@ -63,6 +66,8 @@ def main() -> None:
     ap.add_argument("input")
     ap.add_argument("name")
     ap.add_argument("--audio", action="store_true")
+    ap.add_argument("--crop", help="W:H:X:Y, in source pixels")
+    ap.add_argument("--end", type=float, help="stop here, in seconds")
     a = ap.parse_args()
     if not shutil.which("ffmpeg"):
         sys.exit("ffmpeg is needed: https://ffmpeg.org/download.html")
@@ -71,20 +76,26 @@ def main() -> None:
     WAVES.mkdir(parents=True, exist_ok=True)
     audio = a.audio or not has_video(src)
     base = MEDIA / a.name
+    cut = ["-t", f"{a.end}"] if a.end else []
+    level = f"{LEVEL},afade=t=out:st={a.end - 0.4}:d=0.4" if a.end else LEVEL
     if audio:
-        ff("-i", str(src), "-vn", "-af", LEVEL, "-ar", "48000", "-c:a", "libopus", "-b:a", "96k", f"{base}.webm")
-        ff("-i", str(src), "-vn", "-af", LEVEL, "-ar", "48000", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", f"{base}.m4a")
+        ff("-i", str(src), *cut, "-vn", "-af", level, "-ar", "48000", "-c:a", "libopus", "-b:a", "96k", f"{base}.webm")
+        ff("-i", str(src), *cut, "-vn", "-af", level, "-ar", "48000", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", f"{base}.m4a")
     else:
         # Longest side 1280 at most (720p: plenty for a projector), rotation from the phone applied, even dimensions.
         scale = "scale='if(gt(iw,ih),min(1280,iw),-2)':'if(gt(iw,ih),-2,min(1280,ih))',scale=trunc(iw/2)*2:trunc(ih/2)*2"
-        ff("-i", str(src), "-vf", scale, "-fpsmax", "30", "-af", LEVEL, "-ar", "48000",
+        if a.crop:
+            scale = f"crop={a.crop},{scale}"
+        if a.end:
+            scale = f"{scale},fade=t=out:st={a.end - 0.4}:d=0.4"
+        ff("-i", str(src), *cut, "-vf", scale, "-fpsmax", "30", "-af", level, "-ar", "48000",
            "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "36", "-row-mt", "1", "-deadline", "good", "-cpu-used", "3",
            "-pix_fmt", "yuv420p", "-c:a", "libopus", "-b:a", "96k", f"{base}.webm")
-        ff("-i", str(src), "-vf", scale, "-fpsmax", "30", "-af", LEVEL, "-ar", "48000",
+        ff("-i", str(src), *cut, "-vf", scale, "-fpsmax", "30", "-af", level, "-ar", "48000",
            "-c:v", "libx264", "-crf", "24", "-preset", "medium", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
            "-c:a", "aac", "-b:a", "128k", f"{base}.mp4")
         ff("-ss", "1", "-i", f"{base}.mp4", "-frames:v", "1", "-q:v", "3", f"{base}-poster.jpg")
-    waveform(src, WAVES / f"{a.name}.json")
+    waveform(Path(f"{base}.webm"), WAVES / f"{a.name}.json")
     kind = "audio" if audio else "video"
     mb = lambda p: f"{p.stat().st_size / 1e6:.1f} MB"
     sizes = ", ".join(f"{f.name} {mb(f)}" for f in sorted(MEDIA.glob(f"{a.name}.*")))

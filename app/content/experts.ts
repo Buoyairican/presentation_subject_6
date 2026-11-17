@@ -1,16 +1,16 @@
 /**
- * The seven professionals, one per scene. THIS IS THE FILE TO EDIT when a real video arrives:
- *   1. put the files in app/public/media/ (see README: the media script converts and levels them),
+ * The seven professionals, one per scene. THIS IS THE FILE TO EDIT when a clip changes:
+ *   1. put the files in app/public/media/ (tools/media/prepare.py converts and levels them, see the README),
  *   2. put the subtitles in app/subtitles/<file>.vtt,
- *   3. fill in the person below and set `example: false`.
- * Show only what each person agreed to: `name: null` shows the job title only, `photo: null` shows an icon,
- * `linkedin: null` hides the LinkedIn line and the QR code.
+ *   3. fill in the person below.
+ * Show only what each person agreed to: `name: null` shows the job title only, `company: null` hides the workplace,
+ * `photo: null` shows an icon, `linkedin: null` hides the LinkedIn line and the QR code.
  */
-export type Field = 'Human Resources' | 'Engineering' | 'Cybersecurity' | 'Recruitment' | 'Management' | 'Academia' | 'Panel interview'
+export type Field = 'Cybersecurity' | 'Consulting' | 'Information Systems' | 'Data' | 'Engineering' | 'Business' | 'Human Resources'
 
 export interface Expert {
   scene: number
-  /** True for the stand-in clips made for rehearsals: shows an EXAMPLE tag. */
+  /** True for a stand-in clip made for rehearsals: shows an EXAMPLE tag. */
   example: boolean
   media: {
     kind: 'video' | 'audio'
@@ -18,13 +18,18 @@ export interface Expert {
     file: string
     /** Video only: phone videos are 'portrait'. */
     orientation?: 'landscape' | 'portrait'
+    /** Video only: 'contain' shows the whole picture (bars above and below) instead of filling the frame. */
+    fit?: 'cover' | 'contain'
     /** What the person speaks. French gets English subtitles; English gets English subtitles. */
     language: 'en' | 'fr'
   }
   person: {
     name: string | null
     jobTitle: string
-    company: string
+    company: string | null
+    /** The person's profile, shown in the tag under their name. */
+    profile: string
+    /** Only picks the colour of the tag. */
     field: Field
     /** File in app/public/media/, or null. */
     photo: string | null
@@ -35,94 +40,103 @@ export interface Expert {
 export const experts: Expert[] = [
   {
     scene: 1,
-    example: true,
-    media: { kind: 'video', file: 'example-1', orientation: 'landscape', language: 'en' },
+    example: false,
+    media: { kind: 'video', file: 'scene-1-abir-sakhi', orientation: 'landscape', language: 'en' },
     person: {
-      name: 'Firstname Lastname',
-      jobTitle: 'HR Manager',
-      company: 'Telecom operator',
-      field: 'Human Resources',
-      photo: 'example-1-photo.jpg',
-      linkedin: 'https://www.linkedin.com/in/firstname-lastname',
+      name: 'Abir Sakhi',
+      jobTitle: 'Cybersecurity Analyst',
+      company: 'Teleperformance',
+      profile: 'Cybersecurity Engineer',
+      field: 'Cybersecurity',
+      photo: 'abir-sakhi-photo.jpg',
+      linkedin: 'https://www.linkedin.com/in/abir-sakhi/',
     },
   },
   {
     scene: 2,
-    example: true,
-    media: { kind: 'video', file: 'example-2', orientation: 'landscape', language: 'fr' },
+    example: false,
+    media: { kind: 'video', file: 'scene-2-malak-hajjaj', orientation: 'landscape', language: 'en' },
     person: {
-      name: 'Firstname Lastname',
-      jobTitle: 'Network Engineer',
-      company: 'Internet service provider',
-      field: 'Engineering',
-      photo: 'example-2-photo.jpg',
-      linkedin: 'https://www.linkedin.com/in/firstname-lastname',
+      name: 'Malak Hajjaj',
+      jobTitle: 'Consultant',
+      company: 'Deloitte',
+      profile: 'HRIS Consultant',
+      field: 'Consulting',
+      photo: 'malak-hajjaj-photo.jpg',
+      linkedin: 'https://www.linkedin.com/in/malak-hajjaj-1048b22ab/',
     },
   },
   {
     scene: 3,
-    example: true,
-    media: { kind: 'audio', file: 'example-3', language: 'en' },
+    example: false,
+    // A screen-recorded video call: only the two video tiles are kept, shown whole.
+    media: { kind: 'video', file: 'scene-3-saifeddine-elkadiri', orientation: 'landscape', fit: 'contain', language: 'en' },
     person: {
-      name: 'Firstname Lastname',
-      jobTitle: 'Senior Recruiter',
-      company: 'IT consulting firm',
-      field: 'Recruitment',
-      photo: 'example-3-photo.jpg',
-      linkedin: 'https://www.linkedin.com/in/firstname-lastname',
+      name: 'Sifeddine El Kadiri',
+      jobTitle: 'Logistics Manager',
+      company: 'Forum GENI Entreprises',
+      profile: 'Finance & Computer Science',
+      field: 'Business',
+      photo: 'saifeddine-elkadiri-photo.jpg',
+      linkedin: 'https://www.linkedin.com/in/sifeddine-e-097235390/',
     },
   },
   {
     scene: 4,
-    example: true,
-    media: { kind: 'video', file: 'example-4', orientation: 'portrait', language: 'en' },
+    example: false,
+    media: { kind: 'audio', file: 'scene-4-youssef-ennaciri', language: 'fr' },
     person: {
-      name: 'Firstname Lastname',
-      jobTitle: 'SOC Analyst',
-      company: 'Cybersecurity company',
-      field: 'Cybersecurity',
-      photo: 'example-4-photo.jpg',
-      linkedin: 'https://www.linkedin.com/in/firstname-lastname',
+      name: 'Youssef Ennaciri',
+      jobTitle: 'Head of Information Systems · Business Analyst',
+      company: 'Hôpital Universitaire International Cheikh Zaid',
+      profile: 'IS Consultant · Data Analysis',
+      field: 'Information Systems',
+      photo: 'youssef-ennaciri-photo.jpg',
+      linkedin: 'https://www.linkedin.com/in/ennaciri99/',
     },
   },
   {
     scene: 5,
-    example: true,
-    // The "job title only" case: no name, no photo, no LinkedIn.
-    media: { kind: 'audio', file: 'example-5', language: 'fr' },
+    example: false,
+    media: { kind: 'video', file: 'scene-5-taha-jaid', orientation: 'landscape', language: 'fr' },
     person: {
-      name: null,
-      jobTitle: 'Professor and jury member',
-      company: 'Engineering school',
-      field: 'Academia',
-      photo: null,
-      linkedin: null,
+      name: 'Taha Jaid',
+      jobTitle: 'SOC Manager',
+      company: 'AMANDIGITAL',
+      profile: 'Cybersecurity Engineer',
+      field: 'Cybersecurity',
+      photo: 'taha-jaid-photo.jpg',
+      linkedin: 'https://www.linkedin.com/in/tahajaid/',
     },
   },
   {
     scene: 6,
-    example: true,
-    media: { kind: 'video', file: 'example-6', orientation: 'landscape', language: 'en' },
+    example: false,
+    media: { kind: 'audio', file: 'scene-6-salma-el-mrharraz', language: 'en' },
     person: {
-      name: 'Firstname Lastname',
-      jobTitle: 'IT Manager',
-      company: 'Bank',
-      field: 'Management',
-      photo: 'example-6-photo.jpg',
-      linkedin: 'https://www.linkedin.com/in/firstname-lastname',
+      name: 'Salma El Mrharraz',
+      jobTitle: 'Data Engineer',
+      company: 'Ciril Group',
+      profile: 'Data Engineering',
+      field: 'Data',
+      photo: 'salma-el-mrharraz-photo.jpg',
+      linkedin: 'https://www.linkedin.com/in/salma-el-mrharraz-b25769211/',
     },
   },
   {
     scene: 7,
-    example: true,
-    media: { kind: 'video', file: 'example-7', orientation: 'portrait', language: 'fr' },
+    example: false,
+    // He keeps his workplace private: no company, no photo, no LinkedIn. The call was recorded with the camera off,
+    // so it plays as a voice note.
+    media: { kind: 'audio', file: 'scene-7-yousef-med', language: 'fr' },
     person: {
-      name: 'Firstname Lastname',
-      jobTitle: 'HR Director',
-      company: 'Industrial group',
-      field: 'Human Resources',
-      photo: 'example-7-photo.jpg',
-      linkedin: 'https://www.linkedin.com/in/firstname-lastname',
+      name: 'Youssef Med',
+      jobTitle: 'Aeronautical Engineer',
+      company: null,
+      profile: 'Aeronautical Engineering',
+      field: 'Engineering',
+      photo: null,
+      linkedin: null,
     },
   },
 ]

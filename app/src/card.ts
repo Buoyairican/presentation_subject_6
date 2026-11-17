@@ -3,13 +3,13 @@ import type { Expert, Field } from '../content/experts'
 import { el, maskedWords } from './dom'
 
 const FIELD_COLOR: Record<Field, string> = {
-  'Human Resources': '#ffb36b',
-  Engineering: '#6cc0ff',
   Cybersecurity: '#a08cff',
-  Recruitment: '#ff8fb3',
-  Management: '#5fd3a8',
-  Academia: '#ffe08a',
-  'Panel interview': '#eef2fa',
+  Consulting: '#ffb36b',
+  'Information Systems': '#5fd3a8',
+  Data: '#6cc0ff',
+  Engineering: '#ffe08a',
+  Business: '#ff8fb3',
+  'Human Resources': '#ffb36b',
 }
 
 export const LINKEDIN_SVG =
@@ -93,7 +93,8 @@ export function buildCard(parent: HTMLElement, expert: Expert, variant: 'hero' |
   job.textContent = p.name ? p.jobTitle : ''
   if (!p.name) job.style.display = 'none'
   const company = el('div', 'card-company', meta)
-  company.textContent = p.company
+  company.textContent = p.company ?? ''
+  if (!p.company) company.style.display = 'none'
 
   const body = variant === 'panel' ? root : meta
   const rule = variant === 'panel' ? el('div', 'card-rule', body) : null
@@ -101,7 +102,7 @@ export function buildCard(parent: HTMLElement, expert: Expert, variant: 'hero' |
   const field = el('span', 'tag', tags)
   const sw = el('span', 'swatch', field)
   sw.style.background = FIELD_COLOR[p.field]
-  el('span', '', field).textContent = p.field
+  el('span', '', field).textContent = p.profile
   const lang = el('span', 'tag lang', tags)
   lang.textContent = expert.media.language === 'fr' ? 'Speaks French · English subtitles' : 'Speaks English'
   if (expert.example) el('span', 'tag example', tags).textContent = 'Example'

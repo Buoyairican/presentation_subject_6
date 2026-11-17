@@ -46,6 +46,12 @@ export class Player {
     this.frame = el('div', 'xp-frame', mediaBox)
     if (kind === 'video') {
       const v = el('video', '', this.frame)
+      if (expert.media.fit === 'contain') {
+        // The whole picture, placed high so a wide picture leaves a band below it for the subtitles.
+        v.style.objectFit = 'contain'
+        v.style.objectPosition = '50% 18%'
+        this.frame.classList.add('fit-contain')
+      }
       v.preload = 'auto'
       v.playsInline = true
       v.poster = `media/${file}-poster.jpg`

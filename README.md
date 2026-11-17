@@ -6,8 +6,19 @@ a professional answers in a video or voice note with subtitles, the lesson goes 
 
 ![The key screens](preview.jpg)
 
-All seven clips in it today are **examples** (synthetic voices, drawn silhouettes) so you can rehearse now. Swap
-them for the real ones when they arrive (see [Adding a real clip](#adding-a-real-clip)).
+The seven professionals, one per freeze (details in `app/content/experts.ts`):
+
+| Scene | Professional | Clip |
+|---|---|---|
+| 1 · Being late | Abir Sakhi, Cybersecurity Analyst at Teleperformance | video, English |
+| 2 · Interruptions | Malak Hajjaj, Consultant at Deloitte | video, English |
+| 3 · Weak answers | Sifeddine El Kadiri, Logistics Manager at Forum GENI Entreprises | video call, English |
+| 4 · Managing anger | Youssef Ennaciri, Head of Information Systems at Hôpital Universitaire International Cheikh Zaid | voice note, French |
+| 5 · First impressions | Taha Jaid, SOC Manager at AMANDIGITAL | video, French |
+| 6 · Asking questions | Salma El Mrharraz, Data Engineer at Ciril Group | voice note, English |
+| 7 · Quick decisions | Youssef Med, Aeronautical Engineer (workplace kept private) | voice note, French |
+
+To change or replace a clip, see [Adding a real clip](#adding-a-real-clip).
 
 ## Online (Vercel)
 
@@ -73,7 +84,9 @@ the files and the person's details and it can be done for you.
    ```
 
    This writes the clip to `app/public/media/` (WebM + MP4 at 720p, about 5-10 MB a minute instead of 100+, phone rotation kept, same loudness as every
-   other clip) with its poster picture and the voice waveform.
+   other clip) with its poster picture and the voice waveform. Options: `--audio` keeps only the sound (a call
+   recorded with the camera off becomes a voice note), `--crop W:H:X:Y` keeps part of the picture (the video tiles of
+   a screen-recorded call), `--end 89.9` cuts the dead air after the last word.
 2. **Subtitles**: write `app/subtitles/scene-1-hr-manager.vtt`. If they speak English, write what they say; if they
    speak French, write the English translation. Two lines at most per subtitle:
 
@@ -88,9 +101,9 @@ the files and the person's details and it can be done for you.
    ```
 
 3. **The person**: in `app/content/experts.ts`, edit the entry of that scene: `file`, `kind` (video or audio),
-   `orientation` (portrait for a phone held upright), `language`, and the person (name, job title, company, field,
-   photo file, LinkedIn). Set `example: false`. **Show only what they agreed to**: `name: null` shows the job title
-   only, `photo: null` shows an icon, `linkedin: null` hides the LinkedIn line and the QR code.
+   `orientation` (portrait for a phone held upright), `language`, and the person (name, job title, company, profile,
+   photo file, LinkedIn). **Show only what they agreed to**: `name: null` shows the job title only, `company: null`
+   hides the workplace, `photo: null` shows an icon, `linkedin: null` hides the LinkedIn line and the QR code.
 4. **Rebuild** the folder you present from:
 
    ```bash
@@ -130,7 +143,7 @@ double-press guard and a stage hook for layers that live across slides. Everythi
 | `app/src/media/` | the clip player and the subtitles |
 | `app/src/sound.ts` | the freeze and unfreeze sounds, made in code |
 | `tools/media/` | prepares a real clip |
-| `tools/examples/` | how the example clips were made (Piper voices, drawn placeholders) |
+| `tools/examples/` | how the rehearsal stand-in clips were made before the real ones arrived (Piper voices, drawn placeholders) |
 | `tools/press-sheet/` | makes PRESS-SHEET.pdf from the script |
 | `presentation/` | the built show to present from |
 

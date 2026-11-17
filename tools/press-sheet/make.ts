@@ -3,7 +3,8 @@
  * Writes press-sheet.html and, with Playwright installed, ../../PRESS-SHEET.pdf (A4).
  *   node tools/press-sheet/make.ts
  */
-import { writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { readdirSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { narratorCues, scenes } from '../../app/content/scenes.ts'
@@ -11,6 +12,20 @@ import { narratorCues, scenes } from '../../app/content/scenes.ts'
 const here = fileURLToPath(new URL('.', import.meta.url))
 const fonts = '../../app/node_modules'
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+
+/** How long the clip of a scene lasts (m:ss), read from app/public/media/scene-<n>-*.webm with ffprobe; '' if unknown. */
+function clipLength(scene: number): string {
+  try {
+    const dir = `${here}../../app/public/media/`
+    const file = readdirSync(dir).find((f) => f.startsWith(`scene-${scene}-`) && f.endsWith('.webm'))
+    if (!file) return ''
+    const out = execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', dir + file]).toString()
+    const sec = Math.round(Number(out))
+    return Number.isFinite(sec) ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : ''
+  } catch {
+    return ''
+  }
+}
 
 let n = 0
 const press = (when: string, words: string, after = '') => `
@@ -40,7 +55,7 @@ const sceneBlocks = scenes
   <section class="scene">
     <h3><span>Scene ${s.n}</span> ${esc(s.title)}</h3>
     ${press('Hand up, and on the word:', '<b>“Freeze!”</b>', 'Blue screen + freeze sound. Everyone stops.')}
-    ${press(`Say: <i>“${esc(before)}</i>`, `<b>“${esc(s.videoCue)}”</b>`, `The question “${esc(s.question.text)}” shows for 7 s, then the professional starts by itself (no click needed). During the clip clicks are ignored. When the soft whoosh starts, lower your hand. Actors start again when it fades.`)}
+    ${press(`Say: <i>“${esc(before)}</i>`, `<b>“${esc(s.videoCue)}”</b>`, `The question “${esc(s.question.text)}” shows for 7 s, then the professional starts by itself (no click needed)${clipLength(s.n) ? `: the clip lasts <b>${clipLength(s.n)}</b>, everyone stays frozen` : ''}. During the clip clicks are ignored. When the soft whoosh starts, lower your hand. Actors start again when it fades.`)}
   </section>`
   })
   .join('')

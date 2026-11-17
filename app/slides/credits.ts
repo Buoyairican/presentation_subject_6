@@ -36,7 +36,10 @@ export default defineSlide({
       const row = el('div', 'cr-row', thanks)
       const who = x.person.name ? `${x.person.name}` : x.person.jobTitle
       el('span', 'cr-actor', row).textContent = who + (x.example ? ' (example)' : '')
-      el('span', 'cr-role', row).textContent = x.person.name ? `${x.person.jobTitle} · ${x.person.company}` : x.person.company
+      const where = x.person.company ? ` · ${x.person.company}` : ''
+      // Only the first part of a double job title ("A · B"), so every entry stays short.
+      const job = x.person.jobTitle.split(' · ')[0]
+      el('span', 'cr-role', row).textContent = x.person.name ? `${job}${where}` : x.person.company ?? x.person.profile
       ;(row.firstChild as HTMLElement).style.textAlign = 'left'
       rows.push(row)
     }

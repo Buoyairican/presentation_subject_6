@@ -351,6 +351,7 @@
 .xp[data-layout='wide'] .subs { left: 64px; right: 64px; bottom: 44px; text-align: center;
   font: 600 42px/1.42 var(--sans); letter-spacing: -0.01em; text-wrap: balance; color: #fff; }
 .xp[data-layout='wide'] .subs-line { background: rgba(2, 6, 18, 0.78); }
+.xp[data-layout='wide'] .fit-contain .subs { bottom: 28px; }
 .xp[data-layout='side'] .subs { position: relative; margin-top: 34px; min-height: 230px;
   font: 500 46px/1.3 var(--sans); letter-spacing: -0.015em; text-wrap: pretty; color: #fff; }
 .xp[data-layout='side'] .subs-line { padding: 0; }
